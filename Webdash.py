@@ -24,10 +24,11 @@ from pandas.io import gbq
 from boto.s3.connection import S3Connection
 import os
 import pandas_gbq
-s3= S3Connection(os.environ['S3_KEY'])
-df = gbq.read_gbq("select * from `parabolic-hook-303116.Jobs.Daily_scraping`",project_id = "parabolic-hook-303116")
 
-# df = pd.read_csv("aaaa.csv")
+#s3 = S3Connection(os.environ['S3_KEY'])
+#df = gbq.read_gbq("select * from `parabolic-hook-303116.Jobs.Daily_scraping`",project_id = "parabolic-hook-303116")
+
+df = pd.read_csv("aaaa.csv")
 app = dash.Dash(__name__, suppress_callback_exceptions=True)
 server = app.server
 
