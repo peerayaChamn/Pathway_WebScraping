@@ -21,14 +21,13 @@ import dash_html_components as html
 # the exception.
 
 from pandas.io import gbq
-from boto.s3.connection import S3Connection
-import os
+
 import pandas_gbq
 
-#s3 = S3Connection(os.environ['S3_KEY'])
-#df = gbq.read_gbq("select * from `parabolic-hook-303116.Jobs.Daily_scraping`",project_id = "parabolic-hook-303116")
-
+# df = gbq.read_gbq("select * from `parabolic-hook-303116.Jobs.Daily_scraping`",project_id = "parabolic-hook-303116")
+#df = gbq.read_gbq("select * from `parabolic-hook-303116.Jobs.Daily_scraping`", project_id="parabolic-hook-303116")
 df = pd.read_csv("aaaa.csv")
+df = df.sort_values('Posted_date')
 app = dash.Dash(__name__, suppress_callback_exceptions=True)
 server = app.server
 
@@ -38,8 +37,7 @@ app.layout = html.Div([
         html.Br(),
         html.Label([''], style={'font-weight': 'bold', "text-align": "center"}),
         dcc.Dropdown(id='country',
-                     options=[{'label': x, 'value': x} for x in
-                              df.sort_values('Country_name')['Country_name'].unique()],
+                     options=[{'label': x, 'value': x} for x in df.Country_name.unique()],
                      multi=False,
                      disabled=False,
                      clearable=True,
@@ -51,9 +49,10 @@ app.layout = html.Div([
                      persistence_type='memory'),
 
         dcc.Dropdown(id='job',
-                     options=[{'label': x, 'value': x} for x in df.sort_values('Job_type')['Job_type'].unique()],
-                     multi=False,
-                     clearable=False,
+                     options=[{'label': x, 'value': x} for x in df.Job_type.unique()],
+                     value=['Accounting', 'Project Management'],
+                     multi=True,
+                     clearable=True,
                      placeholder="Certificate",
                      persistence='string',
                      style={'width': "50%"},
@@ -74,11 +73,11 @@ app.layout = html.Div([
      dash.dependencies.Input('job', 'value')])
 def build_graph(first, second):
     dff = df[(df['Country_name'] == first) &
-             (df['Job_type'] == second)]
+             (df['Job_type'].isin(second))]
     # print(dff[:5])
-    fig = px.line(dff, x="Posted_date", y="Total", height=600)
+    fig = px.line(dff, x="Posted_date", y="Total", color="Job_type", height=600)
     return fig
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
