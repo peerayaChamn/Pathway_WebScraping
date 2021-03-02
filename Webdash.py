@@ -26,14 +26,17 @@ import pandas_gbq
 
 # df = gbq.read_gbq("select * from `parabolic-hook-303116.Jobs.Daily_scraping`",project_id = "parabolic-hook-303116")
 #df = gbq.read_gbq("select * from `parabolic-hook-303116.Jobs.Daily_scraping`", project_id="parabolic-hook-303116")
-df = pd.read_csv("aaaa.csv")
+df = pd.read_csv("scraping_data.csv")
 df = df.sort_values('Posted_date')
 app = dash.Dash(__name__, suppress_callback_exceptions=True)
 server = app.server
 
 app.layout = html.Div([
     html.Div([
-
+        html.H1('Jobs Information'),
+ html.Div([
+    html.Img(src='/assets/img.png')
+]),
         html.Br(),
         html.Label([''], style={'font-weight': 'bold', "text-align": "center"}),
         dcc.Dropdown(id='country',
@@ -58,11 +61,11 @@ app.layout = html.Div([
                      style={'width': "50%"},
                      persistence_type='session'),
 
-    ], className='three columns'),
+    ], className='three_columns'),
 
     html.Div([
         dcc.Graph(id='our_graph')
-    ], className='nine columns'),
+    ], className='nine_columns'),
 
 ])
 
@@ -75,7 +78,12 @@ def build_graph(first, second):
     dff = df[(df['Country_name'] == first) &
              (df['Job_type'].isin(second))]
     # print(dff[:5])
-    fig = px.line(dff, x="Posted_date", y="Total", color="Job_type", height=600)
+    fig = px.line(dff, x="Posted_date", y="Total", color="Job_type",labels={
+                     "Posted_date": "Date",
+                     "Total": "Total Entry level jobs",
+                     "Job_type": "Certificates"
+                 },
+                title="Job Information")
     return fig
 
 
