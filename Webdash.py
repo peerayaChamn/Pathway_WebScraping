@@ -20,9 +20,9 @@ import dash_html_components as html
 # In this case, we're adding the elements through a callback, so we can ignore
 # the exception.
 
-from pandas.io import gbq
+# from pandas.io import gbq
 
-import pandas_gbq
+# import pandas_gbq
 
 # df = gbq.read_gbq("select * from `parabolic-hook-303116.Jobs.Daily_scraping`",project_id = "parabolic-hook-303116")
 #df = gbq.read_gbq("select * from `parabolic-hook-303116.Jobs.Daily_scraping`", project_id="parabolic-hook-303116")
