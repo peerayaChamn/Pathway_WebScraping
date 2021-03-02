@@ -14,15 +14,15 @@ float:right;
 }
 Img{
 position: absolute;
-width: 156px;
-height: 140px;
+max-width: 17%;
+max-height: 17%;
 left: 83px;
 top: 23px;
 }
 
 .nine_columns{
 position: absolute;
-height: 420px;
+max-height: 420px;
 left: 113px;
 right: 44px;
 top: 215px;

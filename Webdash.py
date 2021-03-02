@@ -78,12 +78,21 @@ def build_graph(first, second):
     dff = df[(df['Country_name'] == first) &
              (df['Job_type'].isin(second))]
     # print(dff[:5])
+
     fig = px.line(dff, x="Posted_date", y="Total", color="Job_type",labels={
                      "Posted_date": "Date",
                      "Total": "Total Entry level jobs",
                      "Job_type": "Certificates"
                  },
-                title="Job Information")
+                title="Total Job Posting by Day",color_discrete_sequence=["#3A929D", "#FFC328", "#6ABDC8","#B88300",'#AB63FA', '#FFA15A', '#19D3F3', '#FF6692', '#B6E880', '#FF97FF', '#FECB52','#EF553B', '#00CC96'])
+    fig.update_layout(plot_bgcolor="white")
+    fig.update_traces(line=dict(width=4))
+    fig.update_layout(
+        font_family="Arial",
+        title_font_family="Arial",
+        title_font_color="#999999",
+    )
+
     return fig
 
 
