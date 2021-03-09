@@ -14,17 +14,11 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 
-# Since we're adding callbacks to elements that don't exist in the app.layout,
-# Dash will raise an exception to warn us that we might be
-# doing something wrong.
-# In this case, we're adding the elements through a callback, so we can ignore
-# the exception.
 
 # from pandas.io import gbq
 
 # import pandas_gbq
-
-# df = gbq.read_gbq("select * from `parabolic-hook-303116.Jobs.Daily_scraping`",project_id = "parabolic-hook-303116")
+# reading from bigquery
 #df = gbq.read_gbq("select * from `parabolic-hook-303116.Jobs.Daily_scraping`", project_id="parabolic-hook-303116")
 df = pd.read_csv("scraping_data.csv")
 df = df.sort_values('Posted_date')
@@ -61,11 +55,11 @@ app.layout = html.Div([
                      style={'width': "50%"},
                      persistence_type='session'),
 
-    ], className='three_columns'),
+    ], className='drop_down'),
 
     html.Div([
         dcc.Graph(id='our_graph')
-    ], className='nine_columns'),
+    ], className='search'),
 
 ])
 
@@ -77,8 +71,6 @@ app.layout = html.Div([
 def build_graph(first, second):
     dff = df[(df['Country_name'] == first) &
              (df['Job_type'].isin(second))]
-    # print(dff[:5])
-
     fig = px.line(dff, x="Posted_date", y="Total", color="Job_type",labels={
                      "Posted_date": "Date",
                      "Total": "Total Entry level jobs",
