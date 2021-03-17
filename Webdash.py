@@ -7,15 +7,10 @@ Created on Fri Feb 19 11:30:39 2021
 """
 
 import pandas as pd  # (version 1.0.0)
-import plotly  # (version 4.5.0)
-import plotly.express as px
-import dash_bootstrap_components as dbc
-from collections import Counter
-import plotly.graph_objects as go
-import re
-from wordcloud import WordCloud, STOPWORDS
 
-import nltk
+import plotly.express as px
+from collections import Counter
+
 from nltk import word_tokenize
 
 from nltk.corpus import stopwords
@@ -81,8 +76,14 @@ app.layout = html.Div([
     ], style={'display': 'inline-block', 'width': '49%', 'margin-top': '30%'}),
 
     html.Div([
-        dcc.Graph(id='map')
+        dcc.Graph(id='map'),
     ], style={'display': 'inline-block', 'width': '49%', 'margin-top': '40%'}),
+
+    html.Hr(),
+    html.Div([
+        html.H3('Job Summary',id = "key1")
+    ]),
+
 
     html.Div([dcc.Dropdown(id='job1',
                            options=[{'label': x, 'value': x} for x in df1.job_type.unique()],
@@ -106,8 +107,8 @@ app.layout = html.Div([
 
     html.Div(
         [
-            html.Br(),
             dcc.Input(id="input1", type="text", placeholder=""),
+            html.P("Search",id = "key")
         ]
     ),
 
@@ -121,11 +122,12 @@ app.layout = html.Div([
 
     html.Div(
         [
+            html.P("Search Terms"),
             html.Div(id="output"),
         ]
     ),
 
-])
+], className='all')
 
 
 @app.callback(
@@ -161,6 +163,11 @@ def build_graph1(first1, second2):
     dff = df[(df['Country_name'] == first1) &
              (df['Job_type'].isin(second2))]
     fig = px.pie(dff, values='Total', names='Job_type', hole=.5, color_discrete_sequence=["#3A929D", "#FFC328", "#6ABDC8", "#B88300", '#AB63FA', '#FFA15A', '#19D3F3','#FF6692', '#B6E880', '#FF97FF', '#FECB52', '#EF553B', '#00CC96'])
+    fig.update_layout(
+        font_family="Arial",
+        title_font_family="Arial",
+        title_font_color="#999999",
+    )
     return fig
 
 
@@ -175,6 +182,11 @@ def build_graph2(first2):
         "Job_type": ""
     })
     fig.update_layout(plot_bgcolor="white")
+    fig.update_layout(
+        font_family="Arial",
+        title_font_family="Arial",
+        title_font_color="#999999",
+    )
     return fig
 
 
@@ -213,9 +225,15 @@ def build_graph3(country1, job1, value):
     filter_series = result_series.filter(items=skills)
     new = pd.DataFrame(filter_series)
     new = new.reset_index()
-    new.columns = ['Name', 'Code']
-    fig = px.bar(new, x="Name", y="Code", barmode="group",color_discrete_sequence=["#3A929D", "#FFC328", "#6ABDC8", "#B88300", '#AB63FA', '#FFA15A', '#19D3F3','#FF6692', '#B6E880', '#FF97FF', '#FECB52', '#EF553B', '#00CC96'])
+    new.columns = ['Words', 'Counts']
+    fig = px.bar(new, x="Words", y="Counts", barmode="group",text ="Counts",color_discrete_sequence=["#FFC328"])
+    fig.update_traces(textposition='outside')
     fig.update_layout(plot_bgcolor="white")
+    fig.update_layout(
+        font_family="Arial",
+        title_font_family="Arial",
+        title_font_color="#999999",
+    )
     return fig
 
 @app.callback(
@@ -249,10 +267,17 @@ def build_graph4(country1, job1):
     stopwords.update(["with","will","from","within","for","which"])
 
     # Generate a word cloud image
-    wordcloud = WordCloud(stopwords=stopwords, background_color="white").generate(text)
+    wordcloud = WordCloud(stopwords=stopwords, background_color="white",width=800,height=400).generate(text)
 
     # Display the generated image:
     fig = px.imshow(wordcloud)
+    fig.update_xaxes(showticklabels=False)
+    fig.update_yaxes(showticklabels=False)
+    fig.update_layout(
+        font_family="Arial",
+        title_font_family="Arial",
+        title_font_color="#999999",
+    )
     return fig
 
 
