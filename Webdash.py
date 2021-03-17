@@ -5,7 +5,7 @@ Created on Fri Feb 19 11:30:39 2021
 
 @author: peeraya
 """
-
+import nltk
 import pandas as pd  # (version 1.0.0)
 
 import plotly.express as px
