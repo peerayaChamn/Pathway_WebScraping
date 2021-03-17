@@ -5,11 +5,12 @@ Created on Fri Feb 19 11:30:39 2021
 
 @author: peeraya
 """
-import nltk
-import pandas as pd  # (version 1.0.0)
 
+import pandas as pd  # (version 1.0.0)
+import plotly  # (version 4.5.0)
 import plotly.express as px
 from collections import Counter
+from wordcloud import WordCloud, STOPWORDS
 
 from nltk import word_tokenize
 
@@ -249,9 +250,6 @@ def build_graph3(job1):
         text = "['microsoft','QuickBooks','payable','receivable', '10 key','data entry','bookkeeping','organize','tax','deadline','security']"
 
     return text
-
-from wordcloud import WordCloud, STOPWORDS
-
 
 @app.callback(
     dash.dependencies.Output('NLP1', 'figure'),
