@@ -43,18 +43,6 @@ app.layout = html.Div([
         ]),
         html.Br(),
         html.Label([''], style={'font-weight': 'bold', "text-align": "center"}),
-        dcc.Dropdown(id='country',
-                     options=[{'label': x, 'value': x} for x in df.Country_name.unique()],
-                     multi=False,
-                     disabled=False,
-                     value = 'Brazil',
-                     clearable=True,
-                     searchable=True,
-                     placeholder="Country",
-                     className='form-dropdown',
-                     style={'width': "50%"},
-                     persistence='string',
-                     persistence_type='memory'),
 
         dcc.Dropdown(id='job',
                      options=[{'label': x, 'value': x} for x in df.Job_type.unique()],
@@ -65,6 +53,30 @@ app.layout = html.Div([
                      persistence='string',
                      style={'width': "50%"},
                      persistence_type='session'),
+        dcc.Dropdown(id='country',
+                     options=[{'label': x, 'value': x} for x in df.Country_name.unique()],
+                     multi=False,
+                     disabled=False,
+                     value='Brazil',
+                     clearable=True,
+                     searchable=True,
+                     placeholder="Country",
+                     className='form-dropdown',
+                     persistence='string',
+                     persistence_type='memory'),
+
+        dcc.Dropdown(id='web',
+                     options=[{'label': x, 'value': x} for x in df.Website.unique()],
+                     multi=False,
+                     disabled=False,
+                     value='Indeed',
+                     clearable=True,
+                     searchable=True,
+                     placeholder="Country",
+                     className='form-dropdown',
+                     persistence='string',
+                     persistence_type='memory'),
+
 
     ], className='drop_down'),
 
@@ -134,10 +146,10 @@ app.layout = html.Div([
 @app.callback(
     dash.dependencies.Output('our_graph', 'figure'),
     [dash.dependencies.Input('country', 'value'),
-     dash.dependencies.Input('job', 'value')])
-def build_graph(first, second):
-    dff = df[(df['Country_name'] == first) &
-             (df['Job_type'].isin(second))]
+     dash.dependencies.Input('job', 'value'),dash.dependencies.Input('web', 'value')])
+def build_graph(first, second,third):
+    dff = df[(df['Website'] == third) & (df['Country_name'] == first) &(df['Job_type'].isin(second))]
+
     fig = px.line(dff, x="Posted_date", y="Total", color="Job_type", labels={
         "Posted_date": "Date",
         "Total": "Total Entry level jobs",
@@ -280,4 +292,4 @@ def build_graph4(country1, job1):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)
