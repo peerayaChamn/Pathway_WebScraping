@@ -33,13 +33,10 @@ margin-top:45%
 }
 
 
-.NLP{
-margin-left:40%;
-}
-#NLP{
+#NLP_bar{
 position: absolute;
 }
-#NLP1{
+#NLP_wordcloud{
 position: absolute;
 }
 
@@ -47,42 +44,8 @@ position: absolute;
 margin-left:43%;
 }
 
-#web{
-position: absolute;
-width: 309px;
-height: 52px;
-left: 394px;
-top: calc(50% - 52px/2 - 240px);
-}
+#country_summary{
 
-#country{
-position: absolute;
-width: 300px;
-height: 52px;
-left: 882px;
-top: calc(50% - 52px/2 - 240px);
-
-}
-
-#job{
-position: absolute;
-width: 500px;
-height: 52px;
-left: 600px;
-top: calc(50% - 52px/2 - 190px);
-}
-
-
-#country1{
-position: absolute;
-width: 300px;
-height: 52px;
-left: 882px;
-top: calc(50% - 52px/2 - 240px);
-
-}
-
-#job1{
 position: absolute;
 width: 309px;
 height: 52px;
@@ -91,19 +54,11 @@ top: calc(50% - 52px/2 - 240px);
 
 }
 
-#country2{
+#job_summary{
 position: absolute;
 width: 300px;
 height: 52px;
 left: 882px;
-top: calc(50% - 52px/2 - 240px);
-}
-
-#job2{
-position: absolute;
-width: 309px;
-height: 52px;
-left: 394px;
 top: calc(50% - 52px/2 - 240px);
 
 }
