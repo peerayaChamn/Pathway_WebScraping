@@ -90,7 +90,8 @@ html.Div([
     ]),
 
     dcc.Dropdown(id='job_summary',
-                 options=[{'label': x, 'value': x} for x in df1.job_type.unique()]),
+                 options=[{'label': x, 'value': x} for x in df1.job_type.unique()],
+                 value = 'Community Health'),
 
     dcc.Dropdown(id='job_title', options=[], value=[], multi=True,
                  clearable=True,
@@ -101,7 +102,8 @@ html.Div([
                  options=[{'label': x, 'value': x} for x in df1.Country.unique()],
                  multi=False,
                  clearable=True,
-                 placeholder="Country"),
+                 placeholder="Country",
+                 value = 'Canada'),
 dcc.Dropdown(
     options=[
         {'label': 'one word', 'value': 'one'},
@@ -140,9 +142,9 @@ dcc.Dropdown(
         dcc.Graph(id='NLP_wordcloud')
     ], style={'margin-top': '15%', 'width': '100%','margin-right':'10%'}),
 
-    html.Div(id="table1", style={'position': 'absolute','top': '1800px'}),
+    html.Div(id="table1", style={'position': 'absolute','top': '2100px'}),
 
-    html.Div(id="table2", style={'position': 'absolute','top': '1800px','left':'890px'}),
+    html.Div(id="table2", style={'position': 'absolute','top': '2100px','left':'890px'}),
 
     html.Div(id="table3", style={'position': 'absolute', 'top': '3000px', 'left': '890px'}),
     html.Div(id="table4", style={'position': 'absolute', 'top': '3000px'}),
@@ -164,7 +166,8 @@ html.Div([
         html.Br(),
 
     dcc.Dropdown(id='certificate_career',
-                 options=[{'label': x, 'value': x} for x in df2.certificate.unique()], ),
+                 options=[{'label': x, 'value': x} for x in df2.certificate.unique()],
+                 value = 'Community Health'),
 
         dcc.Dropdown(id='job_career', options=[], value=[], multi=True,
                      clearable=True,
@@ -173,7 +176,8 @@ html.Div([
                      options=[{'label': x, 'value': x} for x in df2.Country_name.unique()],
                      multi=False,
                      clearable=True,
-                     placeholder="Country",),
+                     placeholder="Country",
+                     value = 'Canada'),
     ], className='drop_down_career'),
     dbc.Button("Learn more about jobs in your area", href='', id='link_page3', color="info"),
 
