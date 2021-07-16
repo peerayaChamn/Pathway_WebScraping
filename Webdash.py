@@ -27,7 +27,11 @@ df2.sort_values(by='Posted_date')
 df2 = df2.sort_values('Posted_date')
 df2 = df2.drop_duplicates(subset=['certificate', 'Posted_date', 'Country_name'])
 
-app = dash.Dash(external_stylesheets=[dbc.themes.LUMEN])
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.LUMEN],
+                meta_tags=[{'name': 'viewport',
+                            'content': 'width=device-width, initial-scale=1.0'}]
+                )
+
 server = app.server
 
 ################################################################################
@@ -830,5 +834,5 @@ def average(job1, country1):
     return count
 
 
-if __name__ == '__main__':
-    app.run_server(debug=True)
+if __name__=='__main__':
+    app.run_server(debug=False, port=8000)
