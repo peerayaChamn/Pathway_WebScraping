@@ -835,4 +835,4 @@ def average(job1, country1):
 
 
 if __name__=='__main__':
-    app.run_server(debug=False, port=8000)
+    app.run_server(debug=False)
