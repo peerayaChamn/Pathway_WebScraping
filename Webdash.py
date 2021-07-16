@@ -31,7 +31,7 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.LUMEN],
                 meta_tags=[{'name': 'viewport',
                             'content': 'width=device-width, initial-scale=1.0'}]
                 )
-
+app.title = 'Career Exploration'
 server = app.server
 
 ################################################################################
@@ -577,7 +577,7 @@ def update_datatable(country1, job2,job1,location,level):
 
 
     dff = dff.groupby(['company'],as_index=False).count()
-    dff = dff.drop(['title_web','job_type','salary','location','summary','Country','title','website'], axis=1)
+    dff = dff.drop(['title_web','job_type','salary','location','summary','Country','title','website','job_level'], axis=1)
     dff=dff.rename(columns={"date": "Count"})
     dff = dff.rename(columns={"company": "Company Name"})
     dff = dff.sort_values('Count',ascending=False)
@@ -604,7 +604,7 @@ def update_datatable(country1, job2,job1,location,level):
 
 
     dff = dff.groupby(['location'],as_index=False).count()
-    dff = dff.drop(['title_web','job_type','salary','company','summary','Country','title','website'], axis=1)
+    dff = dff.drop(['title_web','job_type','salary','company','summary','Country','title','website','job_level'], axis=1)
     dff=dff.rename(columns={"date": "Count"})
     dff = dff.sort_values('Count',ascending=False)
     dff = dff.rename(columns={"location": "Location"})
@@ -632,7 +632,7 @@ def update_datatable(country1, job2,job1,location,level):
 
 
     dff = dff.groupby(['title_web'],as_index=False).count()
-    dff = dff.drop(['job_type','salary','location','summary','Country','title','website','company'], axis=1)
+    dff = dff.drop(['job_type','salary','location','summary','Country','title','website','company','job_level'], axis=1)
     dff=dff.rename(columns={"date": "Count"})
     dff = dff.rename(columns={"title_web": "Posted Title"})
     dff = dff.sort_values('Count',ascending=False)
