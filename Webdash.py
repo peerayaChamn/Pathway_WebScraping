@@ -55,7 +55,7 @@ sidebar = html.Div(
 )
 
 
-card_total = [
+card_total_page1 = [
     dbc.CardBody(
         [
             html.H5("Total Job", className="card-title"),
@@ -188,9 +188,9 @@ html.Div([
     ),
     dbc.Row(
         [
-            dbc.Col(dbc.Card(card_total, color="info", inverse=True,)),
+            dbc.Col(dbc.Card(card_total_page1, color="info", inverse=True,)),
         ],
-        className="mb-4",id ='card_total'
+        className="mb-4",id ='card_total_page1'
     )],id = 'card'),
  # displaying wordcloud
 
@@ -760,7 +760,9 @@ def set_href2(chosen_country):
                'Hong Kong': 'hk','Pakistan': 'pk','Kuwait':'kw','Luxembourg':'lu','South Africa': 'za',
               'United Kingdom':'uk','New Zealand' : 'nz','Malaysia' :'malaysia','India':'in','Philippines':'ph',
               'Australia' :'au','Indonesia': 'id','Argentina':'ar','Austria' :'ar','Germany': 'de',
-              'Belgium':'be','Brazil':'br','Portugal':'pt','Chile' : 'cl','USA':'www'
+              'Belgium':'be','Brazil':'br','Portugal':'pt','Chile' : 'cl','United States':'www', 'Czech Republic':'cz','Vietnam':'vn',
+              'Sweden' :'se','Korea':'kr','Romania':'ro','Nigeria':'ng','Japan':'jp','Hungary':'hu','Greece':'gr','Finland':'fi','Russia':'ru',
+              'Thailand':'th','Italy':'it'
                }
     id = c_name.get(chosen_country)
     link = "https://" +id+".indeed.com/"
@@ -835,4 +837,4 @@ def average(job1, country1):
 
 
 if __name__=='__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=False,port=8000)
