@@ -23,6 +23,7 @@ df1 = df1.drop_duplicates(subset=['title_web','job_type','salary','location','su
 # reading data for job page sort by date posted and drop duplicates
 df2 = pd.read_csv("df.csv")
 df2['Posted_date'] = pd.to_datetime(df2.Posted_date)
+df2['Total']  =df2['Total'].astype(int)
 df2.sort_values(by='Posted_date')
 df2 = df2.sort_values('Posted_date')
 df2 = df2.drop_duplicates(subset=['certificate', 'Posted_date', 'Country_name'])
@@ -133,7 +134,7 @@ html.Div([
                  value = 'Canada'),
 
     dcc.Dropdown(id='job_summary',
-                 value='Web & Computer Programming',
+                 value='Community Health',
                  clearable=True,
                  multi=False,
                  className='drop',
@@ -221,7 +222,7 @@ html.Div([
 html.Div([
     dcc.Dropdown(id='certificate_career',
                  options=[{'label': x, 'value': x} for x in df2.certificate.unique()],
-                 value = ['Community Health', 'Public Health'],
+                 value = ['Community Health', 'Public Health', 'Hospital Administration'],
                  multi = True),
 
         dcc.Dropdown(id='country_career',
@@ -784,6 +785,7 @@ def build_graph1(first1, second2):
 
     df_grouping2 = dff.groupby(['Country_name','certificate']).mean().round()
     df = df_grouping2.reset_index()
+    df = df.sort_values('Total', ascending=True)
 
     fig = px.bar(df, x='certificate', y='Total', text='Total', labels= {'certificate':'Chosen Certificate', 'Total' : 'Job Posted'},
                  color_discrete_sequence=["#FFC328"])
