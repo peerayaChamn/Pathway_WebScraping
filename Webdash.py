@@ -3,16 +3,10 @@ import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
-import pandas as pd
-import plotly
 import plotly.express as px
 import collections
-from wordcloud import WordCloud, STOPWORDS
+from wordcloud import WordCloud
 import dash_table as dt
-from nltk import word_tokenize
-import dash_table
-from collections import Counter
-import numpy as np
 import re
 import pandas as pd
 from nltk.corpus import stopwords
@@ -119,10 +113,10 @@ card_total = [
 ]
 
 ################################################################################
-#  Creating page two layout (Summary)
+#  Creating page one layout (Summary)
 ################################################################################
 
-page_2_layout = html.Div([
+page_1_layout = html.Div([
 
 html.Div([
     dcc.Dropdown(id='country_summary',
@@ -131,7 +125,7 @@ html.Div([
                  clearable=True,
                  className='drop',
                  placeholder="Country",
-                 value = 'Canada'),
+                 value = 'Nigeria'),
 
     dcc.Dropdown(id='job_summary',
                  value='Community Health',
@@ -195,7 +189,6 @@ html.Div([
     )],id = 'card'),
  # displaying wordcloud
 
-
     html.Div([
         html.H2('Word cloud for Common Words'),
         dcc.Graph(id='NLP_wordcloud')
@@ -214,15 +207,15 @@ html.Div([
 
 
 ################################################################################
-#  Creating page three layout (career)
+#  Creating page two layout (total job)
 ################################################################################
 
-page_3_layout = ([
+page_2_layout = ([
 html.Div([
 html.Div([
     dcc.Dropdown(id='certificate_career',
                  options=[{'label': x, 'value': x} for x in df2.certificate.unique()],
-                 value = ['Community Health', 'Public Health', 'Hospital Administration'],
+                 value = ['Community Health'],
                  multi = True),
 
         dcc.Dropdown(id='country_career',
@@ -283,18 +276,18 @@ app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 ################################################################################
 
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
-def render_page_content(pathname):
+def render_page(pathname):
 
     # if pathname == "/":
     #     return page_1_layout
     if pathname == "/":
-        return page_2_layout
+        return page_1_layout
     elif pathname == "/page-1":
-        return page_3_layout
+        return page_2_layout
 
 
 ################################################################################
-#  Creating graph Page 3 drop down
+#  Creating graph Page 1 drop down filter job type
 ################################################################################
 
 @app.callback(
@@ -302,14 +295,14 @@ def render_page_content(pathname):
     dash.dependencies.Input('country_summary', 'value'),
 )
 
-def set_cities_options(chosen):
+def set_job_type(chosen):
     dff = df1[df1.Country == chosen]
     new = [{'label': y, 'value': y} for y in sorted(dff.job_type.unique())]
     return new
 
 
 ################################################################################
-#  Creating graph Page 2 drop down
+#  Creating graph Page 1 drop down filter title
 ################################################################################
 
 @app.callback(
@@ -320,7 +313,7 @@ dash.dependencies.Input('country_summary', 'value'),
 dash.dependencies.Input('location', 'value'),
 dash.dependencies.Input('job_level', 'value'),
 )
-def set_cities_options(job_summ,country1,location,level):
+def set_title(job_summ,country1,location,level):
     if(location is None):
         dff = df1[(df1['job_type'] == job_summ) & (df1['Country'] == country1)& (df1['job_level'].isin(level))]
     else:
@@ -331,6 +324,9 @@ def set_cities_options(job_summ,country1,location,level):
     selected = [x['value'] for x in new]
     return new, selected
 
+################################################################################
+#  Creating graph Page 1 drop down filter job level
+################################################################################
 
 @app.callback(
     dash.dependencies.Output('job_level', 'options'),
@@ -339,7 +335,7 @@ dash.dependencies.Output('job_level', 'value'),
 dash.dependencies.Input('country_summary', 'value'),
 dash.dependencies.Input('location', 'value'),
 )
-def set_cities_options(job_summ,country1,location):
+def set_job_level(job_summ,country1,location):
     if(location is None):
         dff = df1[(df1['job_type'] == job_summ) & (df1['Country'] == country1)]
     else:
@@ -350,6 +346,9 @@ def set_cities_options(job_summ,country1,location):
     selected = [x['value'] for x in new]
     return new, selected
 
+################################################################################
+#  Creating graph Page 1 drop down filter location
+################################################################################
 
 @app.callback(
 dash.dependencies.Output('location', 'options'),
@@ -358,13 +357,13 @@ dash.dependencies.Output('location', 'options'),
 dash.dependencies.Input('job_title', 'value'),
 dash.dependencies.Input('job_level', 'value'),
      ])
-def set_cities_options(country, job_sum, job_title, level):
+def setLocationOtions(country, job_sum, job_title, level):
     dff = df1[(df1['job_type'] == job_sum) & (df1['Country'] == country) & (df1['title'].isin(job_title)) & (df1['job_level'].isin(level))]
     new = [{'label': y, 'value': y} for y in sorted(dff.location.unique())]
     return new
 
 ################################################################################
-#  Creating graph Page 2 (Bar Chart)
+#  Creating graph Page 1 (Bar Chart)
 ################################################################################
 # this stop word is filtering out the most common word in english that is not meaningful
 stop_words = stopwords.words('english')
@@ -379,7 +378,7 @@ dash.dependencies.Input('word', 'value'),
 dash.dependencies.Input('location', 'value'),
 dash.dependencies.Input('job_level', 'value'),
      ])
-def build_graph3(country1, job1,job2, value,word,location,level):
+def creating_word_count_graph(country1, job1,job2, value,word,location,level):
 
     if(location is None):
         dff = df1[(df1['job_type'] == job1) & (df1['Country'] == country1) & (df1['title'].isin(job2)) &(df1['job_level'].isin(level)) ]
@@ -391,6 +390,7 @@ def build_graph3(country1, job1,job2, value,word,location,level):
     skills = []
 
     # key word to create graph base on certificate
+
     if(job1=='Healthcare Administration'):
         skills = ['registers patients','quality contorl','revenue cycle','professional','billing','scheduling','communication','reports','licensed','maintaining','manage','business','ensuring','marketing','critical','excel','microsoft','risk management','advocate' , 'report findings' , 'presentation' , 'powerpoint' , 'logic model' , 'planning model' , 'finance' , 'budget' , 'evaluate' , 'marketing plan' , 'communication skill', 'oral','written' , 'medical terminology' , 'medical coding' , 'leadership' , 'human resources']
     elif(job1=='Database'):
@@ -431,7 +431,34 @@ def build_graph3(country1, job1,job2, value,word,location,level):
         skills = ['business','sales','marketing','management','finance']
     elif(job1 == "Computer Support"):
         skills = ['database','security','sales','complaints','oracle','network']
+    elif (job1 == 'Buisness and Leadership skill'):
+        skills = ['written', 'verbal', 'communication', 'time management', 'attention', 'problem solving', 'technology',
+                  'responsible', 'management', 'billing', 'bookkeeping', 'managing', 'efficient',
+                  'computerized accounting', 'accounting software', 'monitor']
+    elif (job1 == 'Buisness Administration'):
+        skills = ['written', 'verbal', 'communication', 'time management', 'attention', 'problem solving', 'technology',
+                  'responsible', 'management', 'billing', 'bookkeeping', 'managing', 'efficient',
+                  'computerized accounting', 'accounting software', 'monitor']
+    elif (job1 == 'Graphic design Fundamental'):
+        skills = ['Illustrator','UI','marketing','advertising','creative','web']
 
+    elif (job1 == 'Human Resource Management'):
+        skills = ['written', 'verbal', 'communication', 'time management', 'attention', 'problem solving', 'technology',
+                  'responsible', 'management', 'billing', 'bookkeeping', 'managing', 'efficient',
+                  'computerized accounting', 'accounting software', 'monitor']
+
+    elif (job1 == 'Web Development'):
+        skills = ['microsoft', 'powerbi', 'tableu', 'modeling', 'maintain', 'technical support', 'powerhouse team',
+                  'design', 'information security', 'firewall,', 'encryption', 'cloud', 'cloud computing', 'firebase',
+                  'security', 'Self-motivation', 'attention', 'organized', 'programming skills', 'Planning software',
+                  'Designing and creating applications', 'Update and expand existing programs', 'debugging',
+                  'writing code', 'github', 'azure', 'aws', 'sql', 'Abstract thinking', 'machine learning',
+                  'communication', 'agile', 'react', 'node js', 'html', 'css', 'javascript', 'git', 'php', 'python',
+                  'r', 'java', 'http', 'rest api', 'database', 'nosql', 'patience', 'interpersonal skills', 'seo',
+                  'search engine', 'analytical skills', 'analysis', 'testing', 'resposive design', 'c++', 'c', 'c#',
+                  'flutter', 'go', 'swift', 'kotlin', 'scala', 'statistics', 'big data', 'data science',
+                  'deep learning', 'story telling', 'curiosity', 'data manipulation', 'data visualization',
+                  'model deployment', 'data wrangling', 'data manipulation', ]
     # if the input is inserted then it will append the keyword to the list
     if(value != None):
         value = value.lower()
@@ -457,10 +484,17 @@ def build_graph3(country1, job1,job2, value,word,location,level):
     new_df = new_df.reset_index()
     new_df.columns = ['Words', 'Counts']
 
+    new_df['Total'] = new_df['Counts'].sum()
+    new_df['percent'] = round(new_df['Counts']/new_df['Total'] * 100)
+    new_df['text_percent'] = new_df['percent'].astype(str) + '%'
     # create the graph
-    fig = px.bar(new_df, x="Words", y="Counts", barmode="group",text ="Counts",color_discrete_sequence=["#FFC328"])
+
+    new_df = new_df.sort_values('Counts', ascending=True)
+
+    fig = px.bar(new_df, x="Words", y="percent", barmode="group",text ="text_percent",color_discrete_sequence=["#FFC328"])
     fig.update_traces(textposition='outside')
     fig.update_layout(plot_bgcolor="white")
+    fig.update_layout(yaxis_range=[0, 100])
     fig.update_layout(
         font_family="Arial",
         title_font_family="Arial",
@@ -470,7 +504,7 @@ def build_graph3(country1, job1,job2, value,word,location,level):
 
 
 ################################################################################
-#  Creating graph Page 2 return total
+#  Creating graph Page 1 return total
 ################################################################################
 
 @app.callback(
@@ -479,7 +513,7 @@ def build_graph3(country1, job1,job2, value,word,location,level):
                dash.dependencies.Input('job_title', 'value'),dash.dependencies.Input('location', 'value'),
      dash.dependencies.Input('job_level', 'value')])
 
-def build_graph3(job1,country1,job2,location,level):
+def count_total_job(job1,country1,job2,location,level):
     if (location is None):
         dff = df1[(df1['job_type'] == job1) & (df1['Country'] == country1) & (df1['title'].isin(job2))& (df1['job_level'].isin(level))]
     else:
@@ -490,7 +524,7 @@ def build_graph3(job1,country1,job2,location,level):
     return count
 
 ################################################################################
-#  Creating graph Page 2 return total
+#  Creating graph Page 1 salary
 ################################################################################
 
 def convert(value):
@@ -512,7 +546,7 @@ def split_it(year):
                dash.dependencies.Input('job_title', 'value'),dash.dependencies.Input('location', 'value'),
      dash.dependencies.Input('job_level', 'value')])
 
-def build_graph3(job1,country1,job2,location,level):
+def creating_salary(job1,country1,job2,location,level):
 
     if (location is None):
         dff = df1[(df1['job_type'] == job1) & (df1['Country'] == country1) & (df1['title'].isin(job2)) & (
@@ -557,7 +591,7 @@ def build_graph3(job1,country1,job2,location,level):
     return value
 
 ################################################################################
-#  Creating graph Page 2 return total
+#  Creating company data table
 ################################################################################
 @app.callback(dash.dependencies.Output('table1','children'),
               [dash.dependencies.Input('country_summary', 'value'),
@@ -568,7 +602,7 @@ def build_graph3(job1,country1,job2,location,level):
 
                ])
 
-def update_datatable(country1, job2,job1,location,level):
+def update_datatable_company(country1, job2,job1,location,level):
 
     if (location is None):
         dff = df1[(df1['job_type'] == job1) & (df1['Country'] == country1) & (df1['title'].isin(job2)) &(df1['job_level'].isin(level)) ]
@@ -586,6 +620,9 @@ def update_datatable(country1, job2,job1,location,level):
     columns = [{"name": i, "id": i, } for i in (dff.columns)]
     return dt.DataTable(data=data_1, columns=columns,page_size=30,style_table={'height': '700px', 'overflowY': 'auto','width': '500px'} ,export_format='xlsx',export_headers='display')
 
+################################################################################
+#  Creating location data table
+################################################################################
 
 @app.callback(dash.dependencies.Output('table4','children'),
               [dash.dependencies.Input('country_summary', 'value'),
@@ -595,7 +632,7 @@ def update_datatable(country1, job2,job1,location,level):
                dash.dependencies.Input('job_level', 'value'),
                ])
 
-def update_datatable(country1, job2,job1,location,level):
+def update_datatable_location(country1, job2,job1,location,level):
     if (location is None):
         dff = df1[(df1['job_type'] == job1) & (df1['Country'] == country1) & (df1['title'].isin(job2))& (df1['job_level'].isin(level))]
 
@@ -613,8 +650,9 @@ def update_datatable(country1, job2,job1,location,level):
     columns = [{"name": i, "id": i, } for i in (dff.columns)]
     return dt.DataTable(data=data_1, columns=columns,page_size=30,style_table={'height': '700px', 'overflowY': 'auto','width': '500px'} ,export_format='xlsx',export_headers='display')
 
-
-
+################################################################################
+#  Creating title data table
+################################################################################
 
 @app.callback(dash.dependencies.Output('table2','children'),
               [dash.dependencies.Input('country_summary', 'value'),
@@ -624,7 +662,7 @@ def update_datatable(country1, job2,job1,location,level):
                dash.dependencies.Input('job_level', 'value')
                ])
 
-def update_datatable(country1, job2,job1,location,level):
+def update_datatable_title(country1, job2,job1,location,level):
     if (location is None):
         dff = df1[(df1['job_type'] == job1) & (df1['Country'] == country1) & (df1['title'].isin(job2))& (df1['job_level'].isin(level))]
     else:
@@ -641,6 +679,9 @@ def update_datatable(country1, job2,job1,location,level):
     columns = [{"name": i, "id": i, } for i in (dff.columns)]
     return dt.DataTable(data=data_1, columns=columns,page_size=30,style_table={'height': '700px', 'overflowY': 'auto','overflowX': 'auto','width': '500px'} ,export_format='xlsx',export_headers='display')
 
+################################################################################
+#  Creating common word data table
+################################################################################
 
 @app.callback(dash.dependencies.Output('table3','children'),
               [dash.dependencies.Input('country_summary', 'value'),
@@ -676,7 +717,7 @@ def update_datatable(country1, job2,job1,word,location,level):
     return dt.DataTable(data=data_1, columns=columns,page_size=30,style_table={'height': '700px', 'overflowY': 'auto','overflowX': 'auto','width': '500px'} ,export_format='xlsx',export_headers='display')
 
 ################################################################################
-#  Creating graph Page 2 (word cloud)
+#  Creating graph Page 1 (word cloud)
 ################################################################################
 @app.callback(
     dash.dependencies.Output('NLP_wordcloud', 'figure'),
@@ -687,7 +728,7 @@ dash.dependencies.Input('location', 'value'),
 dash.dependencies.Input('job_level', 'value')
 
      ])
-def build_graph4(country1, job2,job1,location,level):
+def build_wordcloud(country1, job2,job1,location,level):
     if (location is None):
         dff = df1[(df1['job_type'] == job1) & (df1['Country'] == country1) & (df1['title'].isin(job2))& (df1['job_level'].isin(level))]
     else:
@@ -725,12 +766,16 @@ def build_graph4(country1, job2,job1,location,level):
     )
     return fig
 
+################################################################################
+#  Creating graph Page 2 Time series plot
+################################################################################
+
 @app.callback(
     dash.dependencies.Output('time_serie_career', 'figure'),
     [dash.dependencies.Input('country_career', 'value'),
      dash.dependencies.Input('certificate_career', 'value')])
 
-def build_graph(first, second):
+def build_time_series(first, second):
     dff = df2[(df2['Country_name'] == first) & (df2['certificate'].isin(second))]
     fig = px.line(dff, x="Posted_date", y="Total", color="certificate", labels={
         "Posted_date": "Date",
@@ -770,7 +815,7 @@ def set_href2(chosen_country):
     return link
 
 ###############################################################################
-# Creating graph Page 3 (pie chart)
+# Creating graph Page 2 (bar chart)
 ###############################################################################
 
 @app.callback(
@@ -778,7 +823,7 @@ def set_href2(chosen_country):
     [dash.dependencies.Input('country_career', 'value'),
      dash.dependencies.Input('certificate_career', 'value')])
 
-def build_graph1(first1, second2):
+def build_bar_chart_average(first1, second2):
 
     dff = df2[(df2['Country_name'] == first1) &
              (df2['certificate'].isin(second2))]
@@ -798,20 +843,25 @@ def build_graph1(first1, second2):
 
     return fig
 
+###############################################################################
+# Total job posting
+###############################################################################
 
 @app.callback(
     dash.dependencies.Output('total', 'children'),
     [dash.dependencies.Input('country_career', 'value'),
      dash.dependencies.Input('certificate_career', 'value')])
 
-def minimum(job1,country1):
+def sum_number(job1,country1):
     dff = df2[(df2['Country_name'] == job1) &
               (df2['certificate'].isin(country1))]
 
     count = sum(dff['Total'])
     return count
 
-
+###############################################################################
+# max job posting
+###############################################################################
 @app.callback(
     dash.dependencies.Output('maxi', 'children'),
     [dash.dependencies.Input('country_career', 'value'),
@@ -824,7 +874,9 @@ def maximum(job1, country1):
     count = max(dff['Total'])
     return count
 
-
+###############################################################################
+# average job posting
+###############################################################################
 @app.callback(
     dash.dependencies.Output('average', 'children'),
     [dash.dependencies.Input('country_career', 'value'),
